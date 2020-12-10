@@ -2,7 +2,6 @@
 #include "stat.h"
 #include "user.h"
 #include "fs.h"
-#include "proc.h"
 
 int
 main(int argc, char *argv[])
