@@ -550,6 +550,8 @@ int sys_getmeminfo(void)
   {
     if (p->pid == pid)
     {
+      int num = 0;
+      int i;
       // The number of pages allocated for the user part of the process (either from proc->sz or by walking the page table)
       mem += p->sz;
       // The kstack page
@@ -557,16 +559,19 @@ int sys_getmeminfo(void)
       // The PDT page
       mem += 4096;
       // The number of PT pages (need to walk the page table to get this number)
-      int num = 0;
-      pde_t *pde;
-      for (pde = p->pgdir; pde; pde++)
+      pde_t *pde = p->pgdir;
+      for (i = 0; i < 1024; i++)
       {
-        num++;
+        if (*pde)
+        {
+          num++;
+        }
+        pde++;
       }
       mem += 4096 * num;
 
       // load process name
-      int i;
+      
       for (i = 0; p->name[i]; i++)
       {
         name[i] = p->name[i];
