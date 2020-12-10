@@ -94,3 +94,25 @@ kalloc(void)
   return (char*)r;
 }
 
+
+int sys_memtop(void)
+{
+  struct run *r;
+  int page_size = 4096;
+  int available_memory = 0;
+  if(kmem.use_lock)
+    acquire(&kmem.lock);
+
+  r = kmem.freelist;
+
+  while (r)
+  {
+    available_memory += page_size;
+    r = r->next;
+  }
+  
+  if(kmem.use_lock)
+    release(&kmem.lock);
+
+  return available_memory;
+}

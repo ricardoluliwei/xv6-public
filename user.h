@@ -23,6 +23,8 @@ int getpid(void);
 char* sbrk(int);
 int sleep(int);
 int uptime(void);
+int memtop(void);
+int getmeminfo(int pid, char *name, int len);
 
 // ulib.c
 int stat(const char*, struct stat*);

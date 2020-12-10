@@ -532,3 +532,27 @@ procdump(void)
     cprintf("\n");
   }
 }
+
+
+int sys_getmeminfo(void)
+{
+  int pid;
+  char* name;
+  int len;
+
+  if(argint(0, &pid) < 0 || argint(2, &len) < 0 || argptr(1, &name, len) < 0)
+    return -1;
+
+  struct proc *p;
+  int mem = 0;
+  acquire(&ptable.lock);
+  p = &ptable.proc[pid];
+  mem += p->sz;
+  int i;
+  for (i = 0; p->name[i]; i++)
+  {
+    name[i] = p->name[i];
+  }
+  release(&ptable.lock);
+  return mem;
+}
