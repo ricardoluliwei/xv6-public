@@ -548,9 +548,16 @@ int sys_getmeminfo(void)
   acquire(&ptable.lock);
   for (p = ptable.proc; p < &ptable.proc[NPROC]; p++)
   {
-    if (p->pid = pid)
+    if (p->pid == pid)
     {
+      // The number of pages allocated for the user part of the process (either from proc->sz or by walking the page table)
       mem += p->sz;
+      // The kstack page
+      mem += KSTACKSIZE;
+      // The PDT page
+
+      // The number of PT pages (need to walk the page table to get this number)
+      
 
       // load process name
       int i;
@@ -559,7 +566,7 @@ int sys_getmeminfo(void)
         name[i] = p->name[i];
       }
       release(&ptable.lock);
-      
+
       return mem;
     }
     
