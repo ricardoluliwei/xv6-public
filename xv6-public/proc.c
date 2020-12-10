@@ -555,9 +555,15 @@ int sys_getmeminfo(void)
       // The kstack page
       mem += KSTACKSIZE;
       // The PDT page
-
+      mem += 4096;
       // The number of PT pages (need to walk the page table to get this number)
-      
+      int num = 0;
+      pde_t *pde;
+      for (pde = p->pgdir; pde; pde++)
+      {
+        num++;
+      }
+      mem += 4096 * num;
 
       // load process name
       int i;
