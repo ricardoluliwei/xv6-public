@@ -11,13 +11,17 @@ main(int argc, char *argv[])
   int pid = fork();
   wait();
   int i;
+  
   for (i = 0; i < pid; i++)
   {
     char name[16];
-    int result;
-    result = getmeminfo(i, name, 16);
-    if (result)
-      printf(1, "pid: %d, name: %s, mem: %d\n", i, name, result);
+    int mem;
+    mem = getmeminfo(i, name, 16);
+    if (mem)
+    {
+      printf(1, "pid: %d, name: %s, mem: %d\n", i, name, mem);
+    }
+    
   }
 
   exit();

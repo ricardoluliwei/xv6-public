@@ -544,31 +544,44 @@ int sys_getmeminfo(void)
     return -1;
 
   struct proc *p;
+  int mem = 0;
   acquire(&ptable.lock);
-
-  // find the proccess
   for (p = ptable.proc; p < &ptable.proc[NPROC]; p++)
+  {
     if (p->pid == pid)
-      break;
+    {
+      int num = 0;
+      int i;
+      // The number of pages allocated for the user part of the process (either from proc->sz or by walking the page table)
+      mem += p->sz;
+      // The kstack page
+      mem += KSTACKSIZE;
+      // The PDT page
+      mem += 4096;
+      // The number of PT pages (need to walk the page table to get this number)
+      pde_t *pde = p->pgdir;
+      for (i = 0; i < 1024; i++)
+      {
+        if (*pde)
+        {
+          num++;
+        }
+        pde++;
+      }
+      mem += 4096 * num;
 
-  // if no such process found, return 0
-  if (p == &ptable.proc[NPROC])
-    return 0;
+      // load process name
+      
+      for (i = 0; p->name[i]; i++)
+      {
+        name[i] = p->name[i];
+      }
+      release(&ptable.lock);
+
+      return mem;
+    }
+    
+  }
   
-  int page_num = 2; //kstack and pd
-  
-  pde_t *pde = p->pgdir;
-  for (pde = p->pgdir; pde < p->pgdir + 1024; pde++)
-    if (*pde)
-      page_num++;
-  
-
-  // load process name
-  int i;
-  for (i = 0; i < 16, i++)
-    name[i] = p->name[i];
-
-  release(&ptable.lock);
-
-  return 
+  return 0;
 }

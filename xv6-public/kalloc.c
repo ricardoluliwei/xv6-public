@@ -98,15 +98,21 @@ kalloc(void)
 int sys_memtop(void)
 {
   struct run *r;
-  int result = 0;
+  int page_size = 4096;
+  int available_memory = 0;
   if(kmem.use_lock)
     acquire(&kmem.lock);
 
-  for (r = kmem.freelist; r; r = r->next)
-    result += 4096;
+  r = kmem.freelist;
+
+  while (r)
+  {
+    available_memory += page_size;
+    r = r->next;
+  }
   
   if(kmem.use_lock)
     release(&kmem.lock);
 
-  return result;
+  return available_memory;
 }
