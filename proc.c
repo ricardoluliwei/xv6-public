@@ -546,13 +546,21 @@ int sys_getmeminfo(void)
   struct proc *p;
   int mem = 0;
   acquire(&ptable.lock);
-  p = &ptable.proc[pid];
-  mem += p->sz;
-  int i;
-  for (i = 0; p->name[i]; i++)
+  for (p = ptable.proc; p < ptable.proc[NPROC]; p++)
   {
-    name[i] = p->name[i];
+    if (p->pid = pid)
+    {
+      mem += p->sz;
+      int i;
+      for (i = 0; p->name[i]; i++)
+      {
+        name[i] = p->name[i];
+      }
+      release(&ptable.lock);
+      return mem;
+    }
+    
   }
-  release(&ptable.lock);
-  return mem;
+  
+  return 0;
 }
